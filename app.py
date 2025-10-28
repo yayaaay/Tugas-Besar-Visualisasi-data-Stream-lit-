@@ -144,7 +144,7 @@ if not df.empty:
     tab_titles = [
         "Kasus 1: Usia", "Kasus 2: J. Kelamin", "Kasus 3: Lokasi", "Kasus 4: Ras", 
         "Kasus 5: Merokok", "Kasus 6: BMI", "Kasus 7: HbA1c", "Kasus 8: Glukosa vs Usia", 
-        "Kasus 9: Komorbiditas", "Kasus 10: Tren Tahunan"
+        "Kasus 9: Komorbiditas", "Kasus 10: Tren Tahunan", "Kasus 11: Distribusi Status Diabetes" 
     ]
     tabs = st.tabs(tab_titles)
     
@@ -404,36 +404,62 @@ if not df.empty:
             """)
 
     # --- Study Case 9: Komorbiditas ---
+    import numpy as np
     with tabs[8]:
         col_vis, col_text = st.columns([2, 1])
-        df_filtered = df[(df['hypertension'] == 1) & (df['heart_disease'] == 1)]
         
         with col_vis:
-            st.subheader("Studi Kasus 9: Prevalensi Diabetes pada Individu dengan Hipertensi dan Penyakit Jantung")
-            if not df_filtered.empty:
-                fig, ax = plt.subplots(figsize=(8, 6))
-                sns.countplot(data=df_filtered, x='diabetes', ax=ax, palette='viridis')
-                ax.set_title('Prevalensi Diabetes pada Individu dengan Hipertensi dan Penyakit Jantung', fontsize=16)
-                ax.set_xlabel('Status Diabetes (0: Tidak, 1: Ya)', fontsize=12)
-                ax.set_ylabel('Jumlah Individu', fontsize=12)
-                ax.set_xticklabels(['Tidak Diabetes', 'Diabetes'])
-                for p in ax.patches:
-                    ax.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                                ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
-                                textcoords='offset points')
-                sns.despine(left=True, bottom=True)
-                plt.tight_layout()
-                st.pyplot(fig)
-                st.info(f"Total individu dengan Hipertensi dan Penyakit Jantung: **{len(df_filtered)}**")
-            else:
-                st.warning("Tidak ada data untuk individu dengan Hipertensi dan Penyakit Jantung secara bersamaan.")
-        
+            st.subheader("Studi Kasus 9: Analisis Komorbiditas pada Penderita Diabetes")
+
+            # Filter hanya penderita diabetes
+            diab = df[df['diabetes'] == 1]
+
+            # Data untuk radial bar
+            labels = ['Hipertensi', 'Penyakit Jantung', 'Perokok Aktif']
+            sizes = [
+                diab['hypertension'].mean() * 100,
+                diab['heart_disease'].mean() * 100,
+                diab['smoking_history'].value_counts(normalize=True).get('current', 0) * 100
+            ]
+
+            # Setup polar chart
+            angles = np.linspace(0, 2 * np.pi, len(sizes), endpoint=False)
+            fig, ax = plt.subplots(subplot_kw={'polar': True}, figsize=(7, 6))
+            bars = ax.bar(
+                angles,
+                sizes,
+                width=0.8,
+                color=sns.color_palette("viridis", len(sizes)),
+                alpha=0.75,
+                edgecolor='black'
+            )
+
+            # Label & styling
+            ax.set_xticks(angles)
+            ax.set_xticklabels(labels, fontsize=11)
+            ax.set_yticklabels([])
+            ax.set_title("Radial Bar Komorbiditas pada Penderita Diabetes", fontsize=15, pad=20)
+            ax.set_ylim(0, max(sizes) + 10)
+
+            # Tambahkan nilai persentase di atas bar
+            for angle, size in zip(angles, sizes):
+                ax.text(angle, size + 3, f"{size:.1f}%", ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+            plt.tight_layout()
+            st.pyplot(fig)
+
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi menunjukkan prevalensi diabetes pada individu yang memiliki hipertensi dan penyakit jantung. Sumbu X menampilkan dua kategori yaitu No Diabetes dan Diabetes, sedangkan sumbu Y menunjukkan jumlah individu pada masing-masing kategori.Dari grafik terlihat bahwa jumlah individu tanpa diabetes lebih tinggi dibandingkan dengan yang menderita diabetes, meskipun keduanya sama-sama memiliki hipertensi dan penyakit jantung. Hal ini menunjukkan bahwa tidak semua orang dengan dua kondisi tersebut otomatis mengidap diabetes, namun risikonya tetap cukup signifikan, karena jumlah penderita diabetes juga cukup besar dalam kelompok ini.
-            """)
+            Visualisasi ini menggunakan *radial bar chart* untuk menggambarkan tiga komorbiditas utama pada individu penderita diabetes:
 
+            - *Hipertensi:* ~{:.1f}% dari penderita diabetes juga memiliki hipertensi  
+            - *Penyakit Jantung:* ~{:.1f}% memiliki penyakit jantung  
+            - *Perokok Aktif:* ~{:.1f}% memiliki riwayat merokok aktif  
+
+            Grafik ini menyoroti bagaimana ketiga faktor tersebut saling beririsan dengan kondisi diabetes. Terlihat bahwa hipertensi menjadi komorbiditas paling umum, diikuti oleh penyakit jantung, sedangkan proporsi perokok aktif relatif lebih kecil.
+            """.format(sizes[0], sizes[1], sizes[2]))
+            
     # --- Study Case 10: Tren Tahunan ---
     with tabs[9]:
         st.subheader("Studi Kasus 10: Tren Rata-rata BMI dan Kadar HbA1c dari Tahun ke Tahun")
@@ -472,4 +498,31 @@ if not df.empty:
             """)
         else:
             st.warning("Kolom 'year' tidak ditemukan dalam dataset untuk analisis tren tahunan.")
+    with tabs[10]:  # Tab ke-11 (indeks 10)
+        import plotly.graph_objects as go
+        st.subheader("Studi Kasus 11: Distribusi Status Diabetes")
+        
+        # Plotly Pie Chart
+        labels = ['Non-Diabetes', 'Diabetes']
+        values = df['diabetes'].value_counts().sort_index().tolist()
 
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5,
+                                     marker_colors=['#5dade2', '#fd7e14'],
+                                     pull=[0, 0.1])])
+        fig.update_layout(title_text='Distribusi Status Diabetes',
+                          annotations=[dict(text='Status', x=0.5, y=0.5, font_size=24, showarrow=False)])
+
+        # Menampilkan Pie Chart
+        st.plotly_chart(fig)
+
+        # Penjelasan untuk Studi Kasus 11
+        st.subheader("Penjelasan")
+        st.markdown("""
+        Grafik ini menunjukkan distribusi status diabetes pada individu dalam dataset. Visualisasi ini menggunakan diagram donut chart, dengan dua kategori utama:
+
+Non-Diabetes: Menunjukkan 91.5% individu yang tidak menderita diabetes. Ini menunjukkan mayoritas dari populasi dalam dataset ini tidak menderita diabetes.
+
+Diabetes: Menunjukkan 8.5% individu yang menderita diabetes. Meskipun persentasenya lebih kecil, kelompok ini tetap signifikan karena mencakup sekitar 8.5% dari total populasi yang diamati.
+
+Melalui grafik ini, kita dapat menyimpulkan bahwa mayoritas individu dalam dataset ini tidak menderita diabetes, namun penting untuk mencatat bahwa proporsi orang yang menderita diabetes juga cukup besar. Ini menunjukkan bahwa meskipun diabetes bukan masalah yang paling umum di populasi ini, tetap diperlukan perhatian khusus dalam pengelolaan kesehatan, khususnya untuk mencegah meningkatnya prevalensi penyakit ini.
+        """)
