@@ -498,31 +498,67 @@ if not df.empty:
             """)
         else:
             st.warning("Kolom 'year' tidak ditemukan dalam dataset untuk analisis tren tahunan.")
-    with tabs[10]:  # Tab ke-11 (indeks 10)
-        import plotly.graph_objects as go
-        st.subheader("Studi Kasus 11: Distribusi Status Diabetes")
-        
-        # Plotly Pie Chart
-        labels = ['Non-Diabetes', 'Diabetes']
-        values = df['diabetes'].value_counts().sort_index().tolist()
+    with tabs[10]:
+        st.subheader("Studi Kasus 11: Hubungan BMI, Usia, dan Gula Darah")
 
-        fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5,
-                                     marker_colors=['#5dade2', '#fd7e14'],
-                                     pull=[0, 0.1])])
-        fig.update_layout(title_text='Distribusi Status Diabetes',
-                          annotations=[dict(text='Status', x=0.5, y=0.5, font_size=24, showarrow=False)])
+        import plotly.express as px
 
-        # Menampilkan Pie Chart
-        st.plotly_chart(fig)
+        # Ambil sample agar render tidak terlalu berat
+        df_sample = df.sample(3000, random_state=42)
 
-        # Penjelasan untuk Studi Kasus 11
-        st.subheader("Penjelasan")
+        # Scatter Bubble Chart
+        fig = px.scatter(
+            df_sample,
+            x="age",
+            y="bmi",
+            color="diabetes",
+            size="blood_glucose_level",
+            hover_data=["hbA1c_level"],
+            color_discrete_sequence=["#5dade2", "#fd7e14"],
+            labels={
+                'diabetes': 'Status Diabetes',
+                'age': 'Usia',
+                'bmi': 'BMI'
+            },
+            title="Bubble Chart: Hubungan Usia, BMI, dan Kadar Gula Darah"
+        )
+
+        # Penyesuaian ukuran bubble & style
+        fig.update_traces(
+            marker=dict(
+                sizeref=2. * df_sample['blood_glucose_level'].max() / (80. ** 2),
+                sizemode='area',
+                opacity=0.65,
+                line=dict(width=1, color='DarkSlateGrey')
+            )
+        )
+
+        # Layout
+        fig.update_layout(
+            legend_title_text='Status Diabetes',
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.2,
+                xanchor="center",
+                x=0.5
+            )
+        )
+
+        # Tampilkan chart di Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
+        # Penjelasan
         st.markdown("""
-        Grafik ini menunjukkan distribusi status diabetes pada individu dalam dataset. Visualisasi ini menggunakan diagram donut chart, dengan dua kategori utama:
+        *Interpretasi:*
 
-Non-Diabetes: Menunjukkan 91.5% individu yang tidak menderita diabetes. Ini menunjukkan mayoritas dari populasi dalam dataset ini tidak menderita diabetes.
+        Visualisasi ini menampilkan hubungan antara *usia, **BMI (Body Mass Index), dan **kadar gula darah* pada sampel 3.000 individu.  
+        Setiap titik mewakili satu individu:
+        - *Sumbu X* menunjukkan usia pasien.  
+        - *Sumbu Y* menunjukkan nilai BMI.  
+        - *Ukuran lingkaran* merepresentasikan kadar *gula darah (blood_glucose_level)*.  
+        - *Warna* menandakan status diabetes (biru = non-diabetes, oranye = diabetes).  
 
-Diabetes: Menunjukkan 8.5% individu yang menderita diabetes. Meskipun persentasenya lebih kecil, kelompok ini tetap signifikan karena mencakup sekitar 8.5% dari total populasi yang diamati.
-
-Melalui grafik ini, kita dapat menyimpulkan bahwa mayoritas individu dalam dataset ini tidak menderita diabetes, namun penting untuk mencatat bahwa proporsi orang yang menderita diabetes juga cukup besar. Ini menunjukkan bahwa meskipun diabetes bukan masalah yang paling umum di populasi ini, tetap diperlukan perhatian khusus dalam pengelolaan kesehatan, khususnya untuk mencegah meningkatnya prevalensi penyakit ini.
+        Terlihat bahwa pasien dengan *usia lebih tua* dan *BMI lebih tinggi* cenderung memiliki *kadar gula darah yang lebih besar* serta lebih banyak berada pada kategori *penderita diabetes*.  
+        Hal ini menunjukkan adanya hubungan yang kuat antara *faktor usia, obesitas, dan kadar gula darah* dalam menentukan risiko diabetes.
         """)
