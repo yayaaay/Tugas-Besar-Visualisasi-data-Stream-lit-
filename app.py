@@ -160,7 +160,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi histogram menunjukkan bahwa **prevalensi diabetes meningkat seiring bertambahnya usia**. Kelompok usia yang lebih tua, terutama di atas **45 tahun**, memiliki frekuensi kasus diabetes yang jauh lebih tinggi dibandingkan dengan kelompok usia yang lebih muda. Ini menunjukkan hubungan yang **kuat** antara usia dan risiko diabetes.
+            Visualisasi histogram untuk Studi Kasus 1 menunjukkan distribusi usia individu berdasarkan status diabetes mereka, dengan jelas menggambarkan bahwa prevalensi diabetes meningkat secara signifikan seiring bertambahnya usia. kelompok usia yang lebih tua memiliki frekuensi kasus diabetes yang jauh lebih tinggi dibandingkan dengan kelompok usia yang lebih muda, menegaskan usia sebagai faktor risiko utama untuk diabetes dalam dataset ini.
             """)
     
     # --- Study Case 2: Gender ---
@@ -200,7 +200,7 @@ if not df.empty:
             
         st.subheader("Penjelasan")
         st.markdown("""
-        Visualisasi count plot menunjukkan perbedaan prevalensi hipertensi dan penyakit jantung berdasarkan gender. Dalam dataset ini, terlihat bahwa **pria memiliki jumlah kasus hipertensi dan penyakit jantung yang lebih tinggi dibandingkan wanita**. Ini mengindikasikan bahwa gender mungkin merupakan faktor yang berkorelasi dengan risiko kedua kondisi ini.
+        Visualisasi untuk Studi Kasus 2 yang menampilkan prevalensi hipertensi dan penyakit jantung berdasarkan gender menunjukkan bahwa dalam dataset ini, individu pria memiliki jumlah kasus hipertensi yang secara signifikan lebih tinggi dan juga jumlah kasus penyakit jantung yang lebih banyak dibandingkan dengan individu wanita; ini mengindikasikan adanya korelasi yang jelas antara gender pria dan peningkatan prevalensi kedua kondisi kesehatan ini dalam data yang diamati.
         """)
 
     # --- Study Case 3: Lokasi ---
@@ -222,7 +222,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi count plot menunjukkan **variasi yang signifikan** dalam jumlah kasus diabetes di berbagai lokasi (negara bagian). Beberapa lokasi memiliki jumlah total kasus diabetes yang jauh lebih banyak dibandingkan lokasi lain, menyarankan adanya **disparitas geografis** dalam prevalensi diabetes yang bisa disebabkan oleh berbagai faktor regional seperti gaya hidup, akses kesehatan, atau demografi.
+            Visualisasi Menunjukkan distribusi kasus diabetes di berbagai lokasi (negara bagian). Dari plot ini, jelas terlihat bahwa jumlah kasus diabetes sangat bervariasi di setiap lokasi, menunjukkan adanya pola geografis dalam prevalensi diabetes. Berdasarkan analisis data yang telah dilakukan, Delaware adalah lokasi dengan jumlah kasus diabetes terbanyak, yaitu sebanyak 200 kasus. Ini mengindikasikan bahwa prevalensi diabetes paling tinggi dalam dataset ini ditemukan di Delaware.
             """)
 
     # --- Study Case 4: Ras ---
@@ -247,7 +247,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi count plot berdasarkan kategori ras menunjukkan bahwa **prevalensi diabetes bervariasi antar kelompok ras**. Dengan mengeksaminasi jumlah kasus diabetes dalam setiap kategori ras, terlihat bahwa proporsi individu dengan diabetes berbeda di antara kelompok-kelompok ini, menunjukkan bahwa **ras mungkin berhubungan** dengan risiko diabetes.
+            Visualisasi menunjukkan distribusi kasus diabetes berdasarkan ras, yaitu AfricanAmerican, Asian, Caucasian, Hispanic, dan Other. Warna biru mewakili individu tanpa diabetes, sedangkan warna oranye menunjukkan individu dengan diabetes. Terlihat bahwa jumlah penderita diabetes jauh lebih sedikit dibandingkan yang tidak menderita pada semua ras, dengan distribusi yang relatif merata. Berdasarkan hasil perhitungan, prevalensi diabetes tertinggi terdapat pada ras AfricanAmerican (8.74%) dan terendah pada ras Other (8.22%). Perbedaan yang kecil ini menunjukkan bahwa tingkat diabetes hampir sama di setiap kelompok ras.
             """)
 
     # --- Study Case 5: Merokok ---
@@ -269,7 +269,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi count plot riwayat merokok berdasarkan hasil diabetes menunjukkan bahwa beberapa kategori riwayat merokok memiliki proporsi kasus diabetes yang lebih tinggi. Misalnya, individu dengan riwayat merokok **'current'** atau **'former'** mungkin menunjukkan prevalensi diabetes yang berbeda dibandingkan dengan yang **'never'** merokok atau **'No Info'**, menyarankan potensi **korelasi** antara riwayat merokok dan risiko diabetes.
+            Visualisasi menunjukkan distribusi riwayat merokok berdasarkan status diabetes. Mayoritas individu, baik penderita maupun non-penderita diabetes, berada pada kategori never dan No Info. Sementara itu, kategori current dan former memiliki jumlah jauh lebih sedikit. Secara keseluruhan, perbedaan antar kategori kecil, sehingga riwayat merokok tidak tampak berpengaruh signifikan terhadap kejadian diabetes.
             """)
 
     # --- Study Case 6: BMI ---
@@ -290,7 +290,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi box plot menunjukkan **hubungan yang jelas** antara BMI dan kemungkinan menderita diabetes. Individu yang didiagnosis dengan diabetes cenderung memiliki **median BMI yang lebih tinggi** dan distribusi BMI yang bergeser ke arah nilai yang lebih tinggi dibandingkan dengan individu tanpa diabetes, menggarisbawahi bahwa **BMI yang tinggi merupakan faktor risiko** untuk diabetes.
+            Visualisasi box plot terlihat bahwa individu dengan diabetes cenderung memiliki BMI lebih tinggi dibandingkan dengan individu yang tidak menderita diabetes. Median BMI pada kelompok penderita diabetes juga lebih besar, menunjukkan bahwa berat badan berlebih atau obesitas mungkin berhubungan dengan meningkatnya risiko diabetes. Selain itu, kedua kelompok memiliki beberapa outlier dengan nilai BMI sangat tinggi, namun pola umumnya tetap menunjukkan bahwa semakin tinggi BMI, semakin besar kemungkinan seseorang memiliki diabetes.
             """)
 
     # --- Study Case 7: HbA1c ---
@@ -311,7 +311,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi box plot tingkat HbA1c menunjukkan **perbedaan signifikan** antara individu dengan dan tanpa diabetes. Individu dengan diabetes memiliki **tingkat HbA1c yang jauh lebih tinggi**, dengan median dan rentang nilai yang lebih tinggi, menegaskan bahwa **tingkat HbA1c adalah indikator kunci dan prediktor kuat** untuk diagnosis diabetes.
+            Visualisasi box plot tingkat HbA1c menunjukkan individu dengan diabetes memiliki nilai HbA1c yang secara signifikan lebih tinggi dibandingkan individu tanpa diabetes. Median HbA1c pada kelompok penderita diabetes berada di sekitar 6.5–7, sedangkan pada kelompok tanpa diabetes berada di bawah 6. Hal ini menunjukkan adanya perbedaan yang jelas antara kedua kelompok, di mana kenaikan kadar HbA1c berhubungan kuat dengan adanya diabetes.
             """)
 
     # --- Study Case 8: Glukosa vs Usia ---
@@ -331,7 +331,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi box plot tingkat glukosa darah berdasarkan kelompok usia menunjukkan bahwa distribusi tingkat glukosa darah **bervariasi** di antara kelompok usia yang berbeda. Meskipun tidak ada tren linear yang sempurna, terlihat perbedaan dalam median atau penyebaran nilai glukosa darah pada kelompok usia tertentu, menyarankan bahwa **usia dapat mempengaruhi distribusi tingkat glukosa darah**.
+            Visualisasi box plot tingkat glukosa darah berdasarkan kelompok usia menunjukkan bahwa rata-rata kadar glukosa darah cenderung meningkat seiring bertambahnya usia, terutama mulai pada kelompok umur 60–74 tahun. Meskipun median kadar glukosa antar kelompok tidak berbeda terlalu jauh, kelompok usia yang lebih tua menunjukkan peningkatan nilai minimum dan median serta lebih banyak outlier dengan kadar glukosa tinggi. Hal ini mengindikasikan bahwa risiko kadar gula darah tinggi (hiperglikemia) lebih umum terjadi pada usia lanjut dibandingkan usia muda.
             """)
 
     # --- Study Case 9: Komorbiditas ---
@@ -362,7 +362,7 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi count plot pada kelompok individu dengan hipertensi dan penyakit jantung menunjukkan bahwa **sebagian besar dari mereka juga menderita diabetes**. Ini dengan jelas menunjukkan **tingginya prevalensi diabetes** pada individu yang memiliki kedua kondisi komorbiditas ini, menyoroti risiko yang sangat tinggi pada kelompok ini.
+            Visualisasi menunjukkan prevalensi diabetes pada individu yang memiliki hipertensi dan penyakit jantung. Sumbu X menampilkan dua kategori yaitu No Diabetes dan Diabetes, sedangkan sumbu Y menunjukkan jumlah individu pada masing-masing kategori.Dari grafik terlihat bahwa jumlah individu tanpa diabetes lebih tinggi dibandingkan dengan yang menderita diabetes, meskipun keduanya sama-sama memiliki hipertensi dan penyakit jantung. Hal ini menunjukkan bahwa tidak semua orang dengan dua kondisi tersebut otomatis mengidap diabetes, namun risikonya tetap cukup signifikan, karena jumlah penderita diabetes juga cukup besar dalam kelompok ini.
             """)
 
     # --- Study Case 10: Tren Tahunan ---
@@ -399,7 +399,7 @@ if not df.empty:
                 
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi line plot rata-rata BMI dan HbA1c dari tahun ke tahun menunjukkan adanya fluktuasi. Rata-rata BMI dan HbA1c berfluktuasi dari tahun 2015 hingga 2022, tanpa **tren naik atau turun yang konsisten dan drastis**, menunjukkan **stabilitas relatif atau variabilitas** dalam metrik ini di seluruh dataset selama periode waktu tersebut.
+            Visualisasi line plot rata-rata BMI dan HbA1c dari tahun ke tahun menunjukkan tren rata-rata BMI dan HbA1c level dari tahun 2015 hingga 2022. Grafik pertama memperlihatkan bahwa rata-rata BMI cenderung fluktuatif, mengalami sedikit peningkatan hingga 2021 sebelum menurun tajam pada 2022. Sementara itu, grafik kedua menunjukkan bahwa rata-rata HbA1c level relatif stabil dari 2015 sampai 2019, kemudian menurun pada 2020–2021, dan meningkat cukup signifikan pada 2022. Secara keseluruhan, kedua grafik memberikan gambaran mengenai perubahan pola kesehatan (berdasarkan BMI dan kadar gula darah) dari waktu ke waktu.
             """)
         else:
             st.warning("Kolom 'year' tidak ditemukan dalam dataset untuk analisis tren tahunan.")
