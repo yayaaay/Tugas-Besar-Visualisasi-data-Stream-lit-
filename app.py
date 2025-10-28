@@ -404,12 +404,3 @@ if not df.empty:
         else:
             st.warning("Kolom 'year' tidak ditemukan dalam dataset untuk analisis tren tahunan.")
 
-# --- Petunjuk Menjalankan Aplikasi ---
-st.markdown("---")
-st.header("Cara Menjalankan Aplikasi Streamlit")
-st.markdown("""
-1.  **Instal** pustaka yang dibutuhkan: `pip install streamlit pandas matplotlib seaborn`
-2.  **Simpan** kode di atas sebagai file Python (misalnya, `app.py`).
-3.  **Pastikan** file dataset Anda (`diabetes_dataset.csv`) berada di direktori yang sama.
-4.  **Jalankan** dari terminal menggunakan perintah: `streamlit run app.py`
-""")
