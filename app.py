@@ -51,7 +51,7 @@ FILE_PATH = 'diabetes_dataset.csv'
 df, df_race = load_data(FILE_PATH)
 
 # --- Judul dan Animasi ---
-st.title("🚀 Analisis Data Diabetes Interaktif")
+st.title("🚀 Visualisasi Data Diabetes Interaktif")
 
 if not df.empty:
     st.balloons() # Animasi balon
@@ -77,13 +77,20 @@ if not df.empty:
         with st.expander("Nilai Hilang (Null Values)"):
             st.dataframe(df.isnull().sum().rename("Missing Values"))
 
+    # --- Penjelasan Dataset Sebelum EDA ---
+    st.header("📘 Tentang Dataset")
+
+    st.markdown("""
+    Dataset ini berisi data kesehatan dan demografi dari 100.000 individu yang dikumpulkan untuk mendukung penelitian serta pemodelan prediktif terkait penyakit diabetes. Setiap entri mencakup berbagai informasi penting seperti jenis kelamin, usia, lokasi, ras, riwayat hipertensi dan penyakit jantung, riwayat merokok, indeks massa tubuh (BMI), kadar HbA1c, dan kadar glukosa darah, serta status diabetes seseorang (apakah menderita atau tidak). Data ini memungkinkan analisis hubungan antara faktor gaya hidup dan kondisi medis terhadap risiko terjadinya diabetes, serta menjadi dasar dalam pengembangan model prediksi kesehatan berbasis data.
+    """)
+
     # --- Bagian Visualisasi EDA Awal ---
     st.header("🔍 Visualisasi Data Awal (EDA)")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Distribusi Usia Pasien")
+        st.subheader("Distribusi Usia ")
         fig, ax = plt.subplots(figsize=(9, 6)) # Ukuran lebih besar
         sns.histplot(data=df, x='age', kde=True, ax=ax, bins=20, color=sns.color_palette("viridis")[0])
         ax.set_title('Distribusi Usia', fontsize=16)
@@ -104,7 +111,7 @@ if not df.empty:
         st.pyplot(fig)
 
     with col2:
-        st.subheader("Distribusi Jenis Kelamin Pasien")
+        st.subheader("Distribusi Jenis Kelamin ")
         fig, ax = plt.subplots(figsize=(9, 6))
         sns.countplot(data=df, x='gender', ax=ax, palette='viridis')
         ax.set_title('Distribusi Jenis Kelamin', fontsize=16)
@@ -147,16 +154,35 @@ if not df.empty:
         with col_vis:
             st.subheader("Studi Kasus 1: Distribusi Kasus Diabetes di Berbagai Kelompok Usia")
             fig, ax = plt.subplots(figsize=(10, 6))
-            sns.histplot(data=df, x='age', hue='diabetes', kde=True, multiple='stack', ax=ax, bins=25, palette='viridis')
+
+            # plot utama
+            sns.histplot(
+                data=df, 
+                x='age', 
+                hue='diabetes', 
+                kde=True, 
+                multiple='stack', 
+                ax=ax, 
+                bins=25, 
+                palette='viridis',
+                legend=False  # matikan legend otomatis seaborn
+            )
+
             ax.set_title('Distribusi Usia Berdasarkan Status Diabetes', fontsize=16)
             ax.set_xlabel('Usia', fontsize=12)
             ax.set_ylabel('Frekuensi', fontsize=12)
-            handles, labels = ax.get_legend_handles_labels()
-            ax.legend(handles=handles[::-1], labels=['Diabetes', 'Tidak Diabetes'], title='Diabetes', loc='upper right') # Membalik urutan legend
+
+            # Tambahkan legend manual dengan warna sesuai palette
+            from matplotlib.patches import Patch
+            legend_labels = ['Tidak Diabetes', 'Diabetes']
+            legend_colors = sns.color_palette('viridis', n_colors=2)
+            patches = [Patch(color=legend_colors[i], label=legend_labels[i]) for i in range(2)]
+            ax.legend(handles=patches, title='Status Diabetes', loc='upper left')
+
             sns.despine(left=True, bottom=True)
             plt.tight_layout()
             st.pyplot(fig)
-        
+
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
@@ -230,25 +256,68 @@ if not df.empty:
         col_vis, col_text = st.columns([2, 1])
         with col_vis:
             st.subheader("Studi Kasus 4: Korelasi Ras dengan Prevalensi Diabetes")
+
             if not df_race.empty:
-                fig, ax = plt.subplots(figsize=(10, 6))
-                sns.countplot(data=df_race, x='race', hue='diabetes', ax=ax, palette='viridis')
-                ax.set_title('Distribusi Kasus Diabetes berdasarkan Ras', fontsize=16)
-                ax.set_xlabel('Ras', fontsize=12)
-                ax.set_ylabel('Jumlah Kasus', fontsize=12)
-                ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=10)
-                ax.legend(title='Diabetes', labels=['Tidak', 'Ya'], loc='upper right')
-                sns.despine(left=True, bottom=True)
+                # Hitung jumlah kasus per ras dan status diabetes
+                race_counts = df_race.groupby(['race', 'diabetes']).size().reset_index(name='count')
+
+                # Pastikan urutan ras tetap konsisten
+                races = race_counts['race'].unique()
+
+                # Buat subplot untuk tiap ras
+                fig, axes = plt.subplots(
+                    nrows=2, ncols=3, figsize=(12, 8),
+                    subplot_kw=dict(aspect='equal')
+                )
+                axes = axes.flatten()
+
+                colors = sns.color_palette('viridis', n_colors=2)
+                labels = ['Tidak Diabetes', 'Diabetes']
+
+                for i, race in enumerate(races):
+                    data = race_counts[race_counts['race'] == race]
+                    values = data['count'].values
+
+                    if len(values) < 2:
+                        # Jika data tidak lengkap (misal hanya 1 kategori)
+                        values = [values[0], 0]
+
+                    axes[i].pie(
+                        values,
+                        labels=labels,
+                        autopct='%1.1f%%',
+                        startangle=90,
+                        colors=colors,
+                        textprops={'fontsize': 10}
+                    )
+                    axes[i].set_title(race, fontsize=12)
+
+                # Hapus subplot kosong kalau jumlah ras < jumlah subplot
+                for j in range(len(races), len(axes)):
+                    fig.delaxes(axes[j])
+
+                fig.suptitle('Proporsi Diabetes vs Tidak Diabetes per Ras', fontsize=16)
                 plt.tight_layout()
                 st.pyplot(fig)
+
             else:
                 st.warning("Data ras tidak tersedia atau kosong setelah pemrosesan.")
-        
+
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi menunjukkan distribusi kasus diabetes berdasarkan ras, yaitu AfricanAmerican, Asian, Caucasian, Hispanic, dan Other. Warna biru mewakili individu tanpa diabetes, sedangkan warna oranye menunjukkan individu dengan diabetes. Terlihat bahwa jumlah penderita diabetes jauh lebih sedikit dibandingkan yang tidak menderita pada semua ras, dengan distribusi yang relatif merata. Berdasarkan hasil perhitungan, prevalensi diabetes tertinggi terdapat pada ras AfricanAmerican (8.74%) dan terendah pada ras Other (8.22%). Perbedaan yang kecil ini menunjukkan bahwa tingkat diabetes hampir sama di setiap kelompok ras.
+            Visualisasi ini menampilkan diagram lingkaran (pie chart) untuk masing-masing ras,
+            membandingkan proporsi individu dengan diabetes dan tanpa diabetes.
+            Setiap lingkaran merepresentasikan satu kelompok ras:
+            - Warna biru mewakili individu tanpa diabetes  
+            - Warna hijau menunjukkan individu dengan diabetes  
+
+            Dari grafik terlihat bahwa proporsi penderita diabetes relatif kecil (<10%) di semua ras,
+            dengan prevalensi tertinggi pada AfricanAmerican (8.74%) dan terendah pada Other (8.21%).
+            Hal ini menunjukkan bahwa meskipun ada perbedaan antar ras, tingkat prevalensinya tetap cukup seragam.
             """)
+
+
 
     # --- Study Case 5: Merokok ---
     with tabs[4]:
