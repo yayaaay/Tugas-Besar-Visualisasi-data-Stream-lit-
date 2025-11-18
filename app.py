@@ -155,29 +155,30 @@ if not df.empty:
             st.subheader("Studi Kasus 1: Distribusi Kasus Diabetes di Berbagai Kelompok Usia")
             fig, ax = plt.subplots(figsize=(10, 6))
 
-            # plot utama
+            # Filter dataframe untuk hanya menyertakan kasus diabetes (diabetes = 1)
+            df_diabetes = df[df['diabetes'] == 1]
+
+            # plot utama - hanya kasus diabetes
             sns.histplot(
-                data=df, 
+                data=df_diabetes, # Menggunakan dataframe yang sudah difilter
                 x='age', 
-                hue='diabetes', 
-                kde=True, 
-                multiple='stack', 
+                kde=True, # Biarkan kde=True untuk kurva kepadatan
                 ax=ax, 
                 bins=25, 
-                palette='viridis',
-                legend=False  # matikan legend otomatis seaborn
+                color='red', # Menggunakan satu warna karena hanya ada satu kategori
+                legend=False 
             )
 
-            ax.set_title('Distribusi Usia Berdasarkan Status Diabetes', fontsize=16)
+            ax.set_title('Distribusi Usia Individu dengan Status Diabetes', fontsize=16)
             ax.set_xlabel('Usia', fontsize=12)
             ax.set_ylabel('Frekuensi', fontsize=12)
 
-            # Tambahkan legend manual dengan warna sesuai palette
-            from matplotlib.patches import Patch
-            legend_labels = ['Tidak Diabetes', 'Diabetes']
-            legend_colors = sns.color_palette('viridis', n_colors=2)
-            patches = [Patch(color=legend_colors[i], label=legend_labels[i]) for i in range(2)]
-            ax.legend(handles=patches, title='Status Diabetes', loc='upper left')
+            # Hapus legend manual karena hanya ada satu kategori yang ditampilkan
+            # from matplotlib.patches import Patch
+            # legend_labels = ['Diabetes']
+            # legend_colors = ['red'] 
+            # patches = [Patch(color=legend_colors[0], label=legend_labels[0])]
+            # ax.legend(handles=patches, title='Status Diabetes', loc='upper left')
 
             sns.despine(left=True, bottom=True)
             plt.tight_layout()
@@ -186,7 +187,9 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi histogram untuk Studi Kasus 1 menunjukkan distribusi usia individu berdasarkan status diabetes mereka, dengan jelas menggambarkan bahwa prevalensi diabetes meningkat secara signifikan seiring bertambahnya usia. kelompok usia yang lebih tua memiliki frekuensi kasus diabetes yang jauh lebih tinggi dibandingkan dengan kelompok usia yang lebih muda, menegaskan usia sebagai faktor risiko utama untuk diabetes dalam dataset ini.
+            Visualisasi histogram yang telah dimodifikasi ini **secara eksklusif menampilkan distribusi usia** dari individu yang didiagnosis **diabetes**.
+
+            Visualisasi menunjukkan konsentrasi tertinggi kasus diabetes berada pada kelompok usia yang lebih tua, mengonfirmasi kembali bahwa **usia lanjut adalah faktor risiko yang dominan** dalam dataset ini. Kurva kepadatan (KDE) yang tumpang tindih memberikan estimasi bentuk distribusi probabilitas usia untuk populasi penderita diabetes.
             """)
     
     # --- Study Case 2: Gender ---
