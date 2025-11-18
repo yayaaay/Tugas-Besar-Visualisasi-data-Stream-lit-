@@ -81,7 +81,47 @@ if not df.empty:
     st.header("📘 Tentang Dataset")
 
     st.markdown("""
+    ### 100,000 Diabetes Clinical Dataset
+
     Dataset ini berisi data kesehatan dan demografi dari 100.000 individu yang dikumpulkan untuk mendukung penelitian serta pemodelan prediktif terkait penyakit diabetes. Setiap entri mencakup berbagai informasi penting seperti jenis kelamin, usia, lokasi, ras, riwayat hipertensi dan penyakit jantung, riwayat merokok, indeks massa tubuh (BMI), kadar HbA1c, dan kadar glukosa darah, serta status diabetes seseorang (apakah menderita atau tidak). Data ini memungkinkan analisis hubungan antara faktor gaya hidup dan kondisi medis terhadap risiko terjadinya diabetes, serta menjadi dasar dalam pengembangan model prediksi kesehatan berbasis data.
+
+    #### 📊 Informasi Dataset
+    - **Sumber**: [Kaggle - 100,000 Diabetes Clinical Dataset](https://www.kaggle.com/datasets/priyamchoksi/100000-diabetes-clinical-dataset)
+    - **Pemilik/Author**: Priyam Choksi
+    - **Sumber Asli**: Dataset ini bersumber dari Hugging Face
+    - **Lisensi**: MIT License
+    - **Jumlah Data**: 100,000 entri (baris)
+    - **Jumlah Fitur**: 17 kolom
+    - **Frekuensi Update**: Tidak ada update (statis)
+    - **Terakhir Diperbarui**: 1 tahun yang lalu
+
+    #### 📋 Deskripsi Kolom Dataset
+
+    Dataset ini terdiri dari 17 kolom dengan rincian sebagai berikut:
+
+    | No | Nama Kolom | Tipe Data | Deskripsi |
+    |----|------------|-----------|-----------|
+    | 1 | `year` | Integer | Tahun pencatatan data |
+    | 2 | `gender` | Object (Kategorikal) | Jenis kelamin individu (Male/Female) |
+    | 3 | `age` | Float | Usia individu dalam tahun |
+    | 4 | `location` | Object (Kategorikal) | Lokasi geografis (negara bagian) tempat tinggal individu |
+    | 5 | `race:AfricanAmerican` | Integer (Binary) | Indikator ras Afrika-Amerika (1 = Ya, 0 = Tidak) |
+    | 6 | `race:Asian` | Integer (Binary) | Indikator ras Asia (1 = Ya, 0 = Tidak) |
+    | 7 | `race:Caucasian` | Integer (Binary) | Indikator ras Kaukasia (1 = Ya, 0 = Tidak) |
+    | 8 | `race:Hispanic` | Integer (Binary) | Indikator ras Hispanik (1 = Ya, 0 = Tidak) |
+    | 9 | `race:Other` | Integer (Binary) | Indikator ras lainnya (1 = Ya, 0 = Tidak) |
+    | 10 | `hypertension` | Integer (Binary) | Riwayat hipertensi/tekanan darah tinggi (1 = Ya, 0 = Tidak) |
+    | 11 | `heart_disease` | Integer (Binary) | Riwayat penyakit jantung (1 = Ya, 0 = Tidak) |
+    | 12 | `smoking_history` | Object (Kategorikal) | Riwayat merokok (never, former, current, No Info, dll.) |
+    | 13 | `bmi` | Float | Body Mass Index - indeks massa tubuh (kg/m²) |
+    | 14 | `hbA1c_level` | Float | Kadar HbA1c - rata-rata gula darah 2-3 bulan terakhir (%) |
+    | 15 | `blood_glucose_level` | Integer | Kadar glukosa darah saat pengukuran (mg/dL) |
+    | 16 | `diabetes` | Integer (Binary) | Status diabetes (1 = Menderita diabetes, 0 = Tidak) |
+    | 17 | `age_group` | Category | Kelompok usia (hasil kategorisasi dari kolom age) |
+
+    **Catatan**: Dataset ini tidak memiliki nilai yang hilang (missing values) pada seluruh kolom.
+
+    ---
     """)
 
     # --- Bagian Visualisasi EDA Awal ---
@@ -101,13 +141,10 @@ if not df.empty:
         st.pyplot(fig)
         
         st.subheader("Korelasi BMI dan Tingkat Glukosa Darah")
-        fig, ax = plt.subplots(figsize=(9, 6))
-        sns.scatterplot(data=df, x='bmi', y='blood_glucose_level', alpha=0.6, ax=ax, hue='diabetes', palette='viridis', s=60)
-        ax.set_title('BMI vs Tingkat Glukosa Darah', fontsize=16)
-        ax.set_xlabel('BMI', fontsize=12)
-        ax.set_ylabel('Tingkat Glukosa Darah', fontsize=12)
-        sns.despine(left=True, bottom=True)
-        plt.tight_layout()
+        corr_data = df[['bmi', 'blood_glucose_level']].corr()
+        fig, ax = plt.subplots(figsize=(5, 4))
+        sns.heatmap(corr_data, annot=True, cmap='Blues', vmin=-1, vmax=1, ax=ax)
+        ax.set_title("Correlation: BMI vs Blood Glucose Level", fontsize=14)
         st.pyplot(fig)
 
     with col2:
@@ -144,7 +181,7 @@ if not df.empty:
     tab_titles = [
         "Kasus 1: Usia", "Kasus 2: J. Kelamin", "Kasus 3: Lokasi", "Kasus 4: Ras", 
         "Kasus 5: Merokok", "Kasus 6: BMI", "Kasus 7: HbA1c", "Kasus 8: Glukosa vs Usia", 
-        "Kasus 9: Komorbiditas", "Kasus 10: Tren Tahunan", "Kasus 11: Distribusi Status Diabetes" 
+        "Kasus 9: Komorbiditas", "Kasus 10: Tren Tahunan", "Kasus 11: Kasus 11: Hubungan BMI, Usia, dan Gula Darah" 
     ]
     tabs = st.tabs(tab_titles)
     
@@ -497,12 +534,12 @@ if not df.empty:
 
         import plotly.express as px
 
-        # Ambil sample agar render tidak terlalu berat
-        df_sample = df.sample(3000, random_state=42)
+        # ---- Filter usia 0–30 tahun ----
+        df_filtered = df[(df["age"] >= 0) & (df["age"] <= 30)]
 
-        # Scatter Bubble Chart
+        # ---- Bubble Chart tanpa sampling ----
         fig = px.scatter(
-            df_sample,
+            df_filtered,
             x="age",
             y="bmi",
             color="diabetes",
@@ -514,13 +551,13 @@ if not df.empty:
                 'age': 'Usia',
                 'bmi': 'BMI'
             },
-            title="Bubble Chart: Hubungan Usia, BMI, dan Kadar Gula Darah"
+            title="Bubble Chart: Hubungan Usia (0–30), BMI, dan Kadar Gula Darah (Full Dataset)"
         )
 
         # Penyesuaian ukuran bubble & style
         fig.update_traces(
             marker=dict(
-                sizeref=2. * df_sample['blood_glucose_level'].max() / (80. ** 2),
+                sizeref=2. * df_filtered['blood_glucose_level'].max() / (80. ** 2),
                 sizemode='area',
                 opacity=0.65,
                 line=dict(width=1, color='DarkSlateGrey')
@@ -546,13 +583,16 @@ if not df.empty:
         st.markdown("""
         *Interpretasi:*
 
-        Visualisasi ini menampilkan hubungan antara *usia, **BMI (Body Mass Index), dan **kadar gula darah* pada sampel 3.000 individu.  
-        Setiap titik mewakili satu individu:
-        - *Sumbu X* menunjukkan usia pasien.  
-        - *Sumbu Y* menunjukkan nilai BMI.  
-        - *Ukuran lingkaran* merepresentasikan kadar *gula darah (blood_glucose_level)*.  
-        - *Warna* menandakan status diabetes (biru = non-diabetes, oranye = diabetes).  
+        Visualisasi ini menampilkan hubungan antara usia, BMI, dan kadar gula darah pada individu berusia 0 hingga 30 tahun, menggunakan seluruh data dalam rentang usia tersebut.
 
-        Terlihat bahwa pasien dengan *usia lebih tua* dan *BMI lebih tinggi* cenderung memiliki *kadar gula darah yang lebih besar* serta lebih banyak berada pada kategori *penderita diabetes*.  
-        Hal ini menunjukkan adanya hubungan yang kuat antara *faktor usia, obesitas, dan kadar gula darah* dalam menentukan risiko diabetes.
-        """)
+        1. Sumbu X menunjukkan usia.
+
+        2. Sumbu Y menunjukkan BMI.
+
+        3. Ukuran lingkaran mewakili kadar gula darah (semakin besar, semakin tinggi kadar gula).
+
+        4. Warna menunjukkan status diabetes, memisahkan individu yang diabetes dan non-diabetes.
+
+        Dari grafik ini, kita dapat mengamati pola kesehatan pada kelompok usia muda, termasuk kecenderungan bahwa individu dengan BMI lebih tinggi sering memiliki kadar gula darah yang lebih besar, yang bisa mengarah pada risiko diabetes lebih awal.
+            """)
+        
