@@ -187,8 +187,6 @@ if not df.empty:
         with col_text:
             st.subheader("Penjelasan")
             st.markdown("""
-            Visualisasi histogram yang telah dimodifikasi ini **secara eksklusif menampilkan distribusi usia** dari individu yang didiagnosis **diabetes**.
-
             Visualisasi menunjukkan konsentrasi tertinggi kasus diabetes berada pada kelompok usia yang lebih tua, mengonfirmasi kembali bahwa **usia lanjut adalah faktor risiko yang dominan** dalam dataset ini. Kurva kepadatan (KDE) yang tumpang tindih memberikan estimasi bentuk distribusi probabilitas usia untuk populasi penderita diabetes.
             """)
     
