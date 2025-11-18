@@ -260,26 +260,71 @@ if not df.empty:
         Visualisasi untuk Studi Kasus 2 yang menampilkan prevalensi hipertensi dan penyakit jantung berdasarkan gender menunjukkan bahwa dalam dataset ini, individu pria memiliki jumlah kasus hipertensi yang secara signifikan lebih tinggi dan juga jumlah kasus penyakit jantung yang lebih banyak dibandingkan dengan individu wanita; ini mengindikasikan adanya korelasi yang jelas antara gender pria dan peningkatan prevalensi kedua kondisi kesehatan ini dalam data yang diamati.
         """)
 
-    # --- Study Case 3: Lokasi ---
+# --- Study Case 3: Lokasi ---
     with tabs[2]:
         col_vis, col_text = st.columns([2, 1])
         with col_vis:
             st.subheader("Studi Kasus 3: Pola Geografis dalam Distribusi Kasus Diabetes")
-            fig, ax = plt.subplots(figsize=(14, 7)) # Ukuran lebih lebar
-            sns.countplot(data=df, x='location', hue='diabetes', ax=ax, palette='viridis')
-            ax.set_title('Distribusi Kasus Diabetes berdasarkan Lokasi', fontsize=16)
-            ax.set_xlabel('Lokasi', fontsize=12)
-            ax.set_ylabel('Jumlah Kasus', fontsize=12)
-            plt.xticks(rotation=60, ha='right', fontsize=10) # Rotasi dan ukuran font
-            ax.legend(title='Diabetes', labels=['Tidak', 'Ya'], loc='upper right')
+            
+            # Filter hanya pasien diabetes
+            df_diabetes_location = df[df['diabetes'] == 1]
+            
+            # Hitung jumlah kasus per lokasi dan sort
+            location_counts = df_diabetes_location['location'].value_counts().sort_values(ascending=True)
+            
+            # Buat color map - gradasi dari kuning ke merah
+            from matplotlib.colors import LinearSegmentedColormap
+            colors_gradient = ['#fff5e6', '#ffe0b3', '#ffcc80', '#ff9933', '#ff6600', '#cc0000']
+            n_bins = 100
+            cmap = LinearSegmentedColormap.from_list('yellow_red', colors_gradient, N=n_bins)
+            
+            # Normalisasi nilai untuk color mapping
+            norm_values = (location_counts.values - location_counts.values.min()) / (location_counts.values.max() - location_counts.values.min())
+            bar_colors = [cmap(val) for val in norm_values]
+            
+            fig, ax = plt.subplots(figsize=(14, 8))
+            bars = ax.barh(range(len(location_counts)), location_counts.values, color=bar_colors, edgecolor='black', linewidth=0.5)
+            
+            ax.set_yticks(range(len(location_counts)))
+            ax.set_yticklabels(location_counts.index, fontsize=9)
+            ax.set_xlabel('Jumlah Kasus Diabetes', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Lokasi', fontsize=12, fontweight='bold')
+            ax.set_title('Distribusi Kasus Diabetes berdasarkan Lokasi', fontsize=16, fontweight='bold', pad=20)
+            
+            # Tambahkan nilai di ujung bar
+            for i, (count, bar) in enumerate(zip(location_counts.values, bars)):
+                ax.text(count + 1, i, f'{count}', va='center', fontsize=8, fontweight='bold')
+            
+            # Tambahkan colorbar untuk referensi
+            sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=location_counts.values.min(), vmax=location_counts.values.max()))
+            sm.set_array([])
+            cbar = plt.colorbar(sm, ax=ax, pad=0.02)
+            cbar.set_label('Intensitas Kasus', rotation=270, labelpad=20, fontsize=10)
+            
             sns.despine(left=True, bottom=True)
             plt.tight_layout()
             st.pyplot(fig)
         
         with col_text:
             st.subheader("Penjelasan")
-            st.markdown("""
-            Visualisasi Menunjukkan distribusi kasus diabetes di berbagai lokasi (negara bagian). Dari plot ini, jelas terlihat bahwa jumlah kasus diabetes sangat bervariasi di setiap lokasi, menunjukkan adanya pola geografis dalam prevalensi diabetes. Berdasarkan analisis data yang telah dilakukan, Delaware adalah lokasi dengan jumlah kasus diabetes terbanyak, yaitu sebanyak 200 kasus. Ini mengindikasikan bahwa prevalensi diabetes paling tinggi dalam dataset ini ditemukan di Delaware.
+            max_location = location_counts.index[-1]
+            max_count = location_counts.values[-1]
+            min_location = location_counts.index[0]
+            min_count = location_counts.values[0]
+            
+            st.markdown(f"""
+            Visualisasi ini menunjukkan distribusi kasus diabetes di berbagai lokasi (negara bagian). Dari plot ini, jelas terlihat bahwa jumlah kasus diabetes sangat bervariasi di setiap lokasi, menunjukkan adanya pola geografis dalam prevalensi diabetes. Berdasarkan analisis data yang telah dilakukan, Delaware adalah lokasi dengan jumlah kasus diabetes terbanyak, yaitu sebanyak 200 kasus. Ini mengindikasikan bahwa prevalensi diabetes paling tinggi dalam dataset ini ditemukan di Delaware.
+            
+            Visualisasi ini menampilkan **hanya pasien yang menderita diabetes** di berbagai lokasi (negara bagian) dengan sistem gradasi warna:
+            
+            - 🟡 **Warna Kuning Muda**: Lokasi dengan kasus diabetes lebih sedikit
+            - 🟠 **Warna Oranye**: Lokasi dengan kasus diabetes sedang
+            - 🔴 **Warna Merah**: Lokasi dengan kasus diabetes paling banyak
+            
+            **Temuan Utama:**
+            - **{max_location}** memiliki kasus diabetes tertinggi dengan **{max_count} kasus** (bar paling merah)
+            - **{min_location}** memiliki kasus diabetes terendah dengan **{min_count} kasus** (bar paling kuning muda)
+            
             """)
 
     # --- Study Case 4: Ras ---
