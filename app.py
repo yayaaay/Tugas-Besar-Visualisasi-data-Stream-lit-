@@ -160,25 +160,18 @@ if not df.empty:
 
             # plot utama - hanya kasus diabetes
             sns.histplot(
-                data=df_diabetes, # Menggunakan dataframe yang sudah difilter
+                data=df_diabetes,
                 x='age', 
-                kde=True, # Biarkan kde=True untuk kurva kepadatan
+                kde=True, 
                 ax=ax, 
                 bins=25, 
-                color='red', # Menggunakan satu warna karena hanya ada satu kategori
+                color='red', 
                 legend=False 
             )
 
             ax.set_title('Distribusi Usia Individu dengan Status Diabetes', fontsize=16)
             ax.set_xlabel('Usia', fontsize=12)
             ax.set_ylabel('Frekuensi', fontsize=12)
-
-            # Hapus legend manual karena hanya ada satu kategori yang ditampilkan
-            # from matplotlib.patches import Patch
-            # legend_labels = ['Diabetes']
-            # legend_colors = ['red'] 
-            # patches = [Patch(color=legend_colors[0], label=legend_labels[0])]
-            # ax.legend(handles=patches, title='Status Diabetes', loc='upper left')
 
             sns.despine(left=True, bottom=True)
             plt.tight_layout()
